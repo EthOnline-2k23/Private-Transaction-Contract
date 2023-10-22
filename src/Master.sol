@@ -13,11 +13,7 @@ contract MasterContract is SismoConnect {
     mapping(uint256 => uint256) private balances;
 
     event Deposit(address indexed depositor, uint256 amount);
-    event Transfer(
-        address indexed from,
-        address indexed to,
-        uint256 amount
-    );
+    event Transfer(address indexed from, address indexed to, uint256 amount);
     event Withdrawal(address indexed withdrawer, uint256 amount);
     event ResponseVerified(SismoConnectVerifiedResult result);
 
@@ -46,7 +42,10 @@ contract MasterContract is SismoConnect {
         address _to,
         bytes memory _response
     ) external {
-        require(balances[uint256(uint160(msg.sender))] >= _amount, "Insufficient balance");
+        require(
+            balances[uint256(uint160(msg.sender))] >= _amount,
+            "Insufficient balance"
+        );
         SismoConnectVerifiedResult memory result = verifySismoConnectResponse(
             _response
         );
@@ -74,7 +73,7 @@ contract MasterContract is SismoConnect {
         payable(msg.sender).transfer(_amount);
         emit Withdrawal(msg.sender, _amount);
     }
-    
+
     // get balance function
     function getBalance(
         bytes memory _response
@@ -99,8 +98,7 @@ contract MasterContract is SismoConnect {
 
         SismoConnectVerifiedResult memory result = verify({
             responseBytes: response,
-            auths: auths,
-            signature: buildSignature({message: abi.encode(msg.sender)})
+            auths: auths
         });
         return result;
     }
