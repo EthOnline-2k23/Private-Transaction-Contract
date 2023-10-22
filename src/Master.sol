@@ -16,6 +16,7 @@ contract MasterContract is SismoConnect {
     event Transfer(address indexed from, address indexed to, uint256 amount);
     event Withdrawal(address indexed withdrawer, uint256 amount);
     event ResponseVerified(SismoConnectVerifiedResult result);
+    event Balance(uint256 balance);
 
     // constructor function
     constructor(
@@ -75,9 +76,7 @@ contract MasterContract is SismoConnect {
     }
 
     // get balance function
-    function getBalance(
-        bytes memory _response
-    ) external view returns (uint256) {
+    function getBalance(bytes memory _response) external {
         SismoConnectVerifiedResult memory result = verifySismoConnectResponse(
             _response
         );
@@ -86,7 +85,7 @@ contract MasterContract is SismoConnect {
             AuthType.EVM_ACCOUNT
         );
         require(evmAccountIds.length > 0, "No EVM account found");
-        return balances[evmAccountIds[0]];
+        emit Balance(balances[evmAccountIds[0]]);
     }
 
     // verify response function
